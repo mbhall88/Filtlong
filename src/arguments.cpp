@@ -21,108 +21,96 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fstream>
-#include <algorithm>
-#include <cctype>
-#include <climits>
 
 #include "args.h"
 
 
-struct DoublesReader
-{
-    void operator()(const std::string &name, const std::string &value, double &destination) {
-        try {
-            if (value.find_first_not_of("0123456789.") != std::string::npos)
-                throw std::invalid_argument("");
-            destination = std::stod(value);
-        }
-        catch ( ... ) {
-            std::ostringstream problem;
-            problem << "Error: argument '" << name << "' received invalid value type '" << value << "'";
-            throw args::ParseError(problem.str());
-        }
+void DoublesReader::operator()(const std::string &name, const std::string &value, double &destination) {
+    try {
+        if (value.find_first_not_of("0123456789.") != std::string::npos)
+            throw std::invalid_argument("");
+        destination = std::stod(value);
     }
-};
+    catch ( ... ) {
+        std::ostringstream problem;
+        problem << "Error: argument '" << name << "' received invalid value type '" << value << "'";
+        throw args::ParseError(problem.str());
+    }
+}
 
 
-struct IntegerWithSuffixReader
-{
-    void operator()(const std::string &name, const std::string &value, long long &destination) {
-        try {
-            destination = parse_int_with_suffix(value);
-        }
-        catch ( ... ) {
-            std::ostringstream problem;
-            problem << "Error: argument '" << name << "' received invalid value '" << value << "'";
-            throw args::ParseError(problem.str());
-        }
+void IntegerWithSuffixReader::operator()(const std::string &name, const std::string &value, long long &destination) {
+    try {
+        destination = parse_int_with_suffix(value);
+    }
+    catch ( ... ) {
+        std::ostringstream problem;
+        problem << "Error: argument '" << name << "' received invalid value '" << value << "'";
+        throw args::ParseError(problem.str());
+    }
+}
+
+long long IntegerWithSuffixReader::parse_int_with_suffix(const std::string &value) {
+    if (value.empty()) {
+        throw std::invalid_argument("Empty value");
     }
 
-    long long parse_int_with_suffix(const std::string &value) {
-        if (value.empty()) {
-            throw std::invalid_argument("Empty value");
-        }
+    std::string lower_value = value;
+    std::transform(lower_value.begin(), lower_value.end(), lower_value.begin(), ::tolower);
 
-        std::string lower_value = value;
-        std::transform(lower_value.begin(), lower_value.end(), lower_value.begin(), ::tolower);
+    // Find the position where the suffix begins (excluding potential negative sign)
+    size_t start_pos = (value[0] == '-') ? 1 : 0;
+    size_t suffix_pos = lower_value.find_first_not_of("0123456789.", start_pos);
+    
+    if (suffix_pos == std::string::npos) {
+        // No suffix, parse as regular number
+        return static_cast<long long>(std::stod(value));
+    }
 
-        // Find the position where the suffix begins (excluding potential negative sign)
-        size_t start_pos = (value[0] == '-') ? 1 : 0;
-        size_t suffix_pos = lower_value.find_first_not_of("0123456789.", start_pos);
+    // Extract numeric part and suffix
+    std::string numeric_part = value.substr(0, suffix_pos);
+    std::string suffix = lower_value.substr(suffix_pos);
+
+    if (numeric_part.empty() || (numeric_part.size() == 1 && numeric_part[0] == '-')) {
+        throw std::invalid_argument("No numeric value before suffix");
+    }
+
+    double numeric_value = std::stod(numeric_part);
+    long long multiplier = 1;
+
+    // Parse suffix to determine multiplier
+    if (suffix == "k" || suffix == "kb") {
+        multiplier = 1000;
+    } else if (suffix == "m" || suffix == "mb") {
+        multiplier = 1000000;
+    } else if (suffix == "g" || suffix == "gb") {
+        multiplier = 1000000000;
+    } else {
+        throw std::invalid_argument("Unknown suffix: " + suffix);
+    }
+
+    return static_cast<long long>(numeric_value * multiplier);
+}
+
+
+void IntWithSuffixReader::operator()(const std::string &name, const std::string &value, int &destination) {
+    try {
+        IntegerWithSuffixReader reader;
+        long long result = reader.parse_int_with_suffix(value);
         
-        if (suffix_pos == std::string::npos) {
-            // No suffix, parse as regular number
-            return static_cast<long long>(std::stod(value));
+        // Check for overflow
+        if (result > INT_MAX || result < INT_MIN) {
+            throw std::invalid_argument("Value out of range for int");
         }
-
-        // Extract numeric part and suffix
-        std::string numeric_part = value.substr(0, suffix_pos);
-        std::string suffix = lower_value.substr(suffix_pos);
-
-        if (numeric_part.empty() || (numeric_part.size() == 1 && numeric_part[0] == '-')) {
-            throw std::invalid_argument("No numeric value before suffix");
-        }
-
-        double numeric_value = std::stod(numeric_part);
-        long long multiplier = 1;
-
-        // Parse suffix to determine multiplier
-        if (suffix == "k" || suffix == "kb") {
-            multiplier = 1000;
-        } else if (suffix == "m" || suffix == "mb") {
-            multiplier = 1000000;
-        } else if (suffix == "g" || suffix == "gb") {
-            multiplier = 1000000000;
-        } else {
-            throw std::invalid_argument("Unknown suffix: " + suffix);
-        }
-
-        return static_cast<long long>(numeric_value * multiplier);
+        
+        destination = static_cast<int>(result);
     }
-};
-
-
-struct IntWithSuffixReader
-{
-    void operator()(const std::string &name, const std::string &value, int &destination) {
-        try {
-            IntegerWithSuffixReader reader;
-            long long result = reader.parse_int_with_suffix(value);
-            
-            // Check for overflow
-            if (result > INT_MAX || result < INT_MIN) {
-                throw std::invalid_argument("Value out of range for int");
-            }
-            
-            destination = static_cast<int>(result);
-        }
-        catch ( ... ) {
-            std::ostringstream problem;
-            problem << "Error: argument '" << name << "' received invalid value '" << value << "'";
-            throw args::ParseError(problem.str());
-        }
+    catch ( ... ) {
+        std::ostringstream problem;
+        problem << "Error: argument '" << name << "' received invalid value '" << value << "'";
+        throw args::ParseError(problem.str());
     }
-};
+}
 
 
 typedef args::ValueFlag<double, DoublesReader> d_arg;

@@ -48,6 +48,18 @@ class TestUnitSuffixes(unittest.TestCase):
         self.assertEqual(return_code, 0)
         self.assertTrue('target: 10000 bp' in console_out)
 
+    def test_target_bases_g_suffix(self):
+        """Test that g suffix works for target_bases."""
+        console_out, return_code = self.run_command('filtlong --target_bases 1g INPUT > OUTPUT.fastq')
+        self.assertEqual(return_code, 0)
+        self.assertTrue('target: 1000000000 bp' in console_out)
+
+    def test_target_bases_gb_suffix(self):
+        """Test that gb suffix works for target_bases."""
+        console_out, return_code = self.run_command('filtlong --target_bases 1gb INPUT > OUTPUT.fastq')
+        self.assertEqual(return_code, 0)
+        self.assertTrue('target: 1000000000 bp' in console_out)
+
     def test_target_bases_m_suffix(self):
         """Test that m suffix works for target_bases."""
         console_out, return_code = self.run_command('filtlong --target_bases 0.01m INPUT > OUTPUT.fastq')
@@ -102,15 +114,32 @@ class TestUnitSuffixes(unittest.TestCase):
         # Should filter out reads shorter than 1000bp (all test reads are 5000bp)
         # so all should pass through
 
+    def test_min_length_g_suffix(self):
+        """Test that g suffix works for min_length."""
+        console_out, return_code = self.run_command('filtlong --min_length 1g INPUT > OUTPUT.fastq')
+        self.assertEqual(return_code, 0)
+        # Should filter out all reads since they're much shorter than 1GB
+
     def test_max_length_suffix(self):
         """Test that unit suffixes work for max_length."""
         console_out, return_code = self.run_command('filtlong --max_length 10k INPUT > OUTPUT.fastq')
         self.assertEqual(return_code, 0)
         # Should pass all reads since they're all 5000bp
 
+    def test_max_length_gb_suffix(self):
+        """Test that gb suffix works for max_length."""
+        console_out, return_code = self.run_command('filtlong --max_length 1gb INPUT > OUTPUT.fastq')
+        self.assertEqual(return_code, 0)
+        # Should pass all reads since they're much shorter than 1GB
+
     def test_split_suffix(self):
         """Test that unit suffixes work for split."""
         console_out, return_code = self.run_command('filtlong -a ASSEMBLY --split 1k INPUT > OUTPUT.fastq')
+        self.assertEqual(return_code, 0)
+
+    def test_split_g_suffix(self):
+        """Test that g suffix works for split."""
+        console_out, return_code = self.run_command('filtlong -a ASSEMBLY --split 1g INPUT > OUTPUT.fastq')
         self.assertEqual(return_code, 0)
 
     def test_invalid_suffix_error(self):
