@@ -162,7 +162,7 @@ filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz --min_length 1kb --keep_percent
 ```
 
 * `--trim` ← Trim bases from the start and end of reads which do not match a _k_-mer in the reference. This ensures the each read starts and ends with good sequence.
-* `--split 500` ← Split reads whenever 500 consecutive bases fail to match a _k_-mer in the reference. This serves to remove very poor parts of reads while keeping the good parts. A lower value will split more aggressively and a higher value will be more conservative. You can also use unit suffixes here (e.g., `--split 500bp` or `--split 0.5k`).
+* `--split 500` ← Split reads whenever 500 consecutive bases fail to match a _k_-mer in the reference. This serves to remove very poor parts of reads while keeping the good parts. A lower value will split more aggressively and a higher value will be more conservative. You can also use [unit suffixes](#unit-suffixes) here.
 
 <table>
     <tr>
