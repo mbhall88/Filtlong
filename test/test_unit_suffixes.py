@@ -68,7 +68,7 @@ class TestUnitSuffixes(unittest.TestCase):
         """Test that m suffix works for target_bases."""
         console_out, return_code = self.run_command('filtlong --target_bases 0.01m INPUT > OUTPUT.fastq')
         self.assertEqual(return_code, 0)
-        self.assertTrue('target: 10000 bp' in console_out)
+        self.assertTrue('target: 10,000 bp' in console_out)
 
     def test_target_bases_mb_suffix(self):
         """Test that mb suffix works for target_bases."""
@@ -170,13 +170,13 @@ class TestUnitSuffixes(unittest.TestCase):
         """Test that decimal values work with suffixes."""
         console_out, return_code = self.run_command('filtlong --target_bases 3.5k INPUT > OUTPUT.fastq')
         self.assertEqual(return_code, 0)
-        self.assertTrue('target: 3500 bp' in console_out)
+        self.assertTrue('target: 3,500 bp' in console_out)
 
     def test_backwards_compatibility(self):
         """Test that plain numbers still work (backwards compatibility)."""
         console_out, return_code = self.run_command('filtlong --target_bases 10000 INPUT > OUTPUT.fastq')
         self.assertEqual(return_code, 0)
-        self.assertTrue('target: 10000 bp' in console_out)
+        self.assertTrue('target: 10,000 bp' in console_out)
 
     def test_negative_values_with_suffixes(self):
         """Test that negative values with suffixes are properly rejected."""
