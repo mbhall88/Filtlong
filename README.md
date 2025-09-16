@@ -59,26 +59,27 @@ filtlong --min_length 1000 --keep_percent 90 --target_bases 500000000 input.fast
 filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz --min_length 1000 --keep_percent 90 --target_bases 500000000 --trim --split 500 input.fastq.gz | gzip > output.fastq.gz
 ```
 
-### Using unit suffixes (new functionality)
+Note: as explained in the [FAQ section](#faq), I recommend _against_ using short reads as an external reference unless you are very confident in the quality of your short-read set.
 
-You can now use convenient unit suffixes for all length-based options:
+### Unit suffixes
+
+You can use convenient unit suffixes for all length-based options:
 
 ```
-# Using kilobase (kb) and megabase (mb) suffixes
-filtlong --min_length 1kb --keep_percent 90 --target_bases 500mb input.fastq.gz | gzip > output.fastq.gz
+# Using kilobase (k/kb) and megabase (m/mb) suffixes
+filtlong --min_length 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
 
 # Using gigabase (gb) suffix for very large datasets
-filtlong --min_length 5kb --max_length 100kb --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
+filtlong --min_length 5k --max_length 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
 
 # Decimal values are supported too
-filtlong --target_bases 1.5gb --split 500bp input.fastq.gz | gzip > output.fastq.gz
+filtlong --target_bases 1.5g --split 0.5k input.fastq.gz | gzip > output.fastq.gz
+
+# Suffixes are case insensitive too
+filtlong --min_length 1KB --keep_percent 90 --target_bases 500M input.fastq.gz | gzip > output.fastq.gz
 ```
 
 Supported suffixes: `k`, `kb`, `m`, `mb`, `g`, `gb` (case insensitive)
-
-Note: as explained in the [FAQ section](#faq), I recommend _against_ using short reads as an external reference unless you are very confident in the quality of your short-read set.
-
-
 
 ## Example commands (detailed)
 
