@@ -70,7 +70,7 @@ You can use convenient unit suffixes for all length-based options:
 filtlong --min_length 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
 
 # Using gigabase (gb) suffix for very large datasets
-filtlong -l 5k -L 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
+filtlong -l 5k --max_length 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
 
 # Decimal values are supported too
 filtlong --target_bases 1.5g --split 0.5k input.fastq.gz | gzip > output.fastq.gz
