@@ -50,13 +50,13 @@ cp bin/filtlong /usr/local/bin
 ### Without an external reference
 
 ```
-filtlong -l 1000 --keep_percent 90 --target_bases 500000000 input.fastq.gz | gzip > output.fastq.gz
+filtlong --min_length 1000 --keep_percent 90 --target_bases 500000000 input.fastq.gz | gzip > output.fastq.gz
 ```
 
 ### With an external reference
 
 ```
-filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz -l 1000 --keep_percent 90 --target_bases 500000000 --trim --split 500 input.fastq.gz | gzip > output.fastq.gz
+filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz --min_length 1000 --keep_percent 90 --target_bases 500000000 --trim --split 500 input.fastq.gz | gzip > output.fastq.gz
 ```
 
 Note: as explained in the [FAQ section](#faq), I recommend _against_ using short reads as an external reference unless you are very confident in the quality of your short-read set.
@@ -66,8 +66,8 @@ Note: as explained in the [FAQ section](#faq), I recommend _against_ using short
 You can use convenient unit suffixes for all length-based options:
 
 ```
-# Using kilobase (k/kb) and megabase (m/mb) suffixes with short options
-filtlong -l 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
+# Using kilobase (k/kb) and megabase (m/mb) suffixes
+filtlong --min_length 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
 
 # Using gigabase (gb) suffix for very large datasets
 filtlong -l 5k -L 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
