@@ -17,6 +17,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential zlib1g-dev python3
+
+    # tests fail due to number formatting if the default runner locale ('C') is used
+    - name: Set locale
+      run: |
+        sudo locale-gen en_AU.UTF-8
+        sudo update-locale LANG=en_AU.UTF-8
+      env:
+        LANG: en_AU.UTF-8
+        LC_ALL: en_AU.UTF-8
     
     - name: Build project
       run: make -j
