@@ -21,11 +21,11 @@ jobs:
     # tests fail due to number formatting if the default runner locale ('C') is used
     - name: Set locale
       run: |
-        sudo locale-gen en_AU.UTF-8
-        sudo update-locale LANG=en_AU.UTF-8
+        sudo locale-gen en_US.UTF-8
+        sudo update-locale LANG=en_US.UTF-8
       env:
-        LANG: en_AU.UTF-8
-        LC_ALL: en_AU.UTF-8
+        LANG: en_US.UTF-8
+        LC_ALL: en_US.UTF-8
     
     - name: Build project
       run: make -j
