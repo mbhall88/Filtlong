@@ -225,17 +225,17 @@ Arguments::Arguments(int argc, char **argv) {
     try {
         parser.ParseCLI(argc, argv);
     }
-    catch (args::Help) {
+    catch (const args::Help&) {
         std::cerr << parser;
         parsing_result = HELP;
         return;
     }
-    catch (args::ParseError e) {
+    catch (const args::ParseError& e) {
         std::cerr << e.what() << "\n";
         parsing_result = BAD;
         return;
     }
-    catch (args::ValidationError e) {
+    catch (const args::ValidationError& e) {
         std::cerr << e.what() << "\n";
         parsing_result = BAD;
         return;
