@@ -16,16 +16,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential zlib1g-dev python3
+        sudo apt-get install -y build-essential zlib1g-dev python3 locales
 
     # tests fail due to number formatting if the default runner locale ('C') is used
     - name: Set locale
       run: |
         sudo locale-gen en_US.UTF-8
         sudo update-locale LANG=en_US.UTF-8
-      env:
-        LANG: en_US.UTF-8
-        LC_ALL: en_US.UTF-8
     
     - name: Build project
       run: make -j
@@ -37,3 +34,6 @@ jobs:
     
     - name: Run tests
       run: python3 -m unittest discover -s test -p "test_*.py"
+      env:
+        LANG: en_US.UTF-8
+        LC_ALL: en_US.UTF-8
