@@ -50,13 +50,13 @@ cp bin/filtlong /usr/local/bin
 ### Without an external reference
 
 ```
-filtlong --min_length 1000 --keep_percent 90 --target_bases 500000000 input.fastq.gz | gzip > output.fastq.gz
+filtlong -l 1000 --keep_percent 90 --target_bases 500000000 input.fastq.gz | gzip > output.fastq.gz
 ```
 
 ### With an external reference
 
 ```
-filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz --min_length 1000 --keep_percent 90 --target_bases 500000000 --trim --split 500 input.fastq.gz | gzip > output.fastq.gz
+filtlong -1 short_1.fastq.gz -2 short_2.fastq.gz -l 1000 --keep_percent 90 --target_bases 500000000 --trim --split 500 input.fastq.gz | gzip > output.fastq.gz
 ```
 
 Note: as explained in the [FAQ section](#faq), I recommend _against_ using short reads as an external reference unless you are very confident in the quality of your short-read set.
@@ -66,17 +66,17 @@ Note: as explained in the [FAQ section](#faq), I recommend _against_ using short
 You can use convenient unit suffixes for all length-based options:
 
 ```
-# Using kilobase (k/kb) and megabase (m/mb) suffixes
-filtlong --min_length 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
+# Using kilobase (k/kb) and megabase (m/mb) suffixes with short options
+filtlong -l 1kb --keep_percent 90 --target_bases 500m input.fastq.gz | gzip > output.fastq.gz
 
 # Using gigabase (gb) suffix for very large datasets
-filtlong --min_length 5k --max_length 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
+filtlong -l 5k -L 100k --target_bases 2gb input.fastq.gz | gzip > output.fastq.gz
 
 # Decimal values are supported too
 filtlong --target_bases 1.5g --split 0.5k input.fastq.gz | gzip > output.fastq.gz
 
 # Suffixes are case insensitive too
-filtlong --min_length 1KB --keep_percent 90 --target_bases 500M input.fastq.gz | gzip > output.fastq.gz
+filtlong -l 1KB --keep_percent 90 --target_bases 500M input.fastq.gz | gzip > output.fastq.gz
 ```
 
 Supported suffixes: `k`, `kb`, `m`, `mb`, `g`, `gb` (case insensitive)
@@ -244,9 +244,9 @@ optional arguments:
       -t[int], --target_bases [int]        keep only the best reads up to this many total bases (unit suffixes: k, kb,
                                            m, mb, g, gb)
       -p[float], --keep_percent [float]    keep only this percentage of the best reads (measured by bases)
-      --min_length [int]                   minimum length threshold (unit suffixes: k, kb, m, mb, g, gb)
-      --max_length [int]                   maximum length threshold (unit suffixes: k, kb, m, mb, g, gb)
-      --min_mean_q [float]                 minimum mean quality threshold
+      -l[int], --min_length [int]          minimum length threshold (unit suffixes: k, kb, m, mb, g, gb)
+      -L[int], --max_length [int]          maximum length threshold (unit suffixes: k, kb, m, mb, g, gb)
+      -q[float], --min_mean_q [float]      minimum mean quality threshold
       --min_window_q [float]               minimum window quality threshold
 
    external references (if provided, read quality will be determined using these instead of from the Phred scores):
